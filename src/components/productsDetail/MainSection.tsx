@@ -6,6 +6,11 @@ import {
 import { getCategoryLabel } from "../../types/product";
 import { useAllCartsCount } from "../../store/useCartStore.ts";
 import { useRequireAuth } from "../../hooks/auth/useRequireAuth";
+import {
+	useLikeProduct,
+	useUnlikeProduct,
+} from "../../hooks/product/useProductMutation";
+import LikeButton from "../common/LikeButton";
 import type { Product } from "../../types/product";
 
 interface MainSectionProps {
@@ -17,6 +22,8 @@ export default function MainSection({ product }: MainSectionProps) {
 	const openSelectCartModal = useOpenSelectCartModal();
 	const cartCount = useAllCartsCount();
 	const { requireAuth } = useRequireAuth();
+	const { mutate: like } = useLikeProduct();
+	const { mutate: unlike } = useUnlikeProduct();
 
 	const handleAddToCart = requireAuth(() => {
 		const hasCartData = cartCount > 0;
@@ -27,9 +34,17 @@ export default function MainSection({ product }: MainSectionProps) {
 		}
 	});
 
+	const handleToggleLike = requireAuth(() => {
+		if (product.is_liked) {
+			unlike(product.id);
+		} else {
+			like(product.id);
+		}
+	});
+
 	return (
 		<div className="mb-6 sm:mb-10 grid items-start gap-6 sm:gap-10 md:grid-cols-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">
-			<div className="mx-auto md:mx-0 w-full max-w-sm md:max-w-none overflow-hidden rounded-2xl sm:rounded-[28px] bg-[#F7F3E9]">
+			<div className="relative mx-auto md:mx-0 w-full max-w-sm md:max-w-none overflow-hidden rounded-2xl sm:rounded-[28px] bg-[#F7F3E9]">
 				<div className="aspect-square">
 					<img
 						src={product.image_url}
@@ -37,6 +52,13 @@ export default function MainSection({ product }: MainSectionProps) {
 						className="h-full w-full object-cover"
 					/>
 				</div>
+				{/* 좋아요 버튼 */}
+				<LikeButton
+					liked={product.is_liked}
+					count={product.like_count}
+					onToggle={handleToggleLike}
+					className="absolute top-3 right-3 bg-white shadow-md"
+				/>
 			</div>
 
 			<div className="flex h-full flex-col bg-white py-2 sm:py-4 lg:min-h-[620px] lg:py-6">

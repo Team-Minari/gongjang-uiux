@@ -19,3 +19,17 @@ export const getProduct = (productId: number) =>
 	apiClient
 		.get<ApiResponse<Product>>(`${BASE}/${productId}`)
 		.then((res) => res.data.data);
+
+/** 좋아요 순 베스트 상품 목록 조회 */
+export const getBestProducts = () =>
+	apiClient
+		.get<ApiResponse<Product[]>>(`${BASE}/best`)
+		.then((res) => res.data.data);
+
+/** 상품 좋아요 */
+export const likeProduct = (productId: number) =>
+	apiClient.post(`${BASE}/${productId}/like`);
+
+/** 상품 좋아요 취소 */
+export const unlikeProduct = (productId: number) =>
+	apiClient.delete(`${BASE}/${productId}/like`);

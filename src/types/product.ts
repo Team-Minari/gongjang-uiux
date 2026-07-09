@@ -8,6 +8,8 @@ export interface Product {
 	price: number;
 	image_url: string;
 	category: CartCategory;
+	like_count: number;
+	is_liked: boolean;
 }
 
 // ── 카테고리 탭 (best는 백엔드 enum에 없는 UI 전용 ID) ──

@@ -2,12 +2,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ShoppingCart } from "lucide-react";
 import { categories, getCategoryLabel } from "../../types/product";
-import { useProducts } from "../../hooks/product/useProduct";
+import { useProducts, useBestProducts } from "../../hooks/product/useProduct";
+import {
+	useLikeProduct,
+	useUnlikeProduct,
+} from "../../hooks/product/useProductMutation";
 import {
 	useOpenAddToCartModal,
 	useOpenSelectCartModal,
 } from "../../store/useCartModalStore.ts";
 import { useAllCartsCount } from "../../store/useCartStore.ts";
+import { useRequireAuth } from "../../hooks/auth/useRequireAuth";
+import LikeButton from "../common/LikeButton";
 
 interface ProductSectionProps {
 	title: string;
@@ -16,16 +22,22 @@ interface ProductSectionProps {
 export default function ProductSection({ title }: ProductSectionProps) {
 	const navigate = useNavigate();
 	const [activeCategory, setActiveCategory] = useState(categories[0].id);
+	const isBest = activeCategory === "best";
 
 	const currentCategory = categories.find((c) => c.id === activeCategory)!;
-	const { data: products = [] } = useProducts(
-		activeCategory === "best" ? undefined : { category: activeCategory }
+	const { data: normalProducts = [] } = useProducts(
+		isBest ? undefined : { category: activeCategory },
+		{ enabled: !isBest }
 	);
-	const currentProducts = products.slice(0, 8);
+	const { data: bestProducts = [] } = useBestProducts({ enabled: isBest });
+	const currentProducts = (isBest ? bestProducts : normalProducts).slice(0, 8);
 
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
 	const cartCount = useAllCartsCount();
+	const { requireAuth } = useRequireAuth();
+	const { mutate: like } = useLikeProduct();
+	const { mutate: unlike } = useUnlikeProduct();
 
 	const handleAddToCart = (e: React.MouseEvent, productId: number) => {
 		e.stopPropagation(); // 상세 페이지로 이동하는 부모 클릭 이벤트 방지
@@ -36,6 +48,14 @@ export default function ProductSection({ title }: ProductSectionProps) {
 			openAddToCartModal();
 		}
 	};
+
+	const handleToggleLike = requireAuth((productId: number, liked: boolean) => {
+		if (liked) {
+			unlike(productId);
+		} else {
+			like(productId);
+		}
+	});
 
 	return (
 		<section className="w-full bg-white py-10 sm:py-12 lg:py-16">
@@ -76,6 +96,15 @@ export default function ProductSection({ title }: ProductSectionProps) {
 									src={product.image_url}
 									alt={product.name}
 									className="w-full h-full object-cover"
+								/>
+								{/* 좋아요 버튼 */}
+								<LikeButton
+									liked={product.is_liked}
+									count={product.like_count}
+									onToggle={() =>
+										handleToggleLike(product.id, product.is_liked)
+									}
+									className="absolute top-2.5 right-2.5 bg-white shadow-md"
 								/>
 								{/* 장바구니 버튼 */}
 								<button

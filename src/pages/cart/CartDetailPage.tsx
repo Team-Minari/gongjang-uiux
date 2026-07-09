@@ -10,8 +10,13 @@ import {
 import { useAuthStore } from "../../store/auth/useAuthStore";
 import SharedCartPanel from "../../components/cart/SharedCartPanel";
 import { useOpenSelectCartModal } from "../../store/useCartModalStore";
-import { useDeleteCartItem } from "../../hooks/cart/useCartMutation";
+import {
+	useDeleteCartItem,
+	useLikeCart,
+	useUnlikeCart,
+} from "../../hooks/cart/useCartMutation";
 import { useRequireAuth } from "../../hooks/auth/useRequireAuth";
+import LikeButton from "../../components/common/LikeButton";
 import type { CartItemResponse } from "../../types/cart";
 
 // ── 통합 아이템 타입 ──
@@ -40,6 +45,8 @@ export default function CartDetailPage() {
 	const navigate = useNavigate();
 	const openSelectCartModal = useOpenSelectCartModal();
 	const deleteItemMutation = useDeleteCartItem();
+	const { mutate: likeCartMutate } = useLikeCart();
+	const { mutate: unlikeCartMutate } = useUnlikeCart();
 	const { requireAuth } = useRequireAuth();
 	const currentUserId = useAuthStore((s) => s.user?.id);
 
@@ -120,6 +127,15 @@ export default function CartDetailPage() {
 		(acc, item) => acc + item.price * item.quantity,
 		0
 	);
+	const handleToggleLike = requireAuth(() => {
+		if (!cart) return;
+		if (cart.is_liked) {
+			unlikeCartMutate(cart.id);
+		} else {
+			likeCartMutate(cart.id);
+		}
+	});
+
 	const showSharedPanel = !isPublic && isSharedCart;
 	const budgetUsage = cartBudget
 		? Math.min((totalPrice / cartBudget) * 100, 100)
@@ -153,6 +169,13 @@ export default function CartDetailPage() {
 						<h1 className="text-xl font-semibold text-gray-900">
 							{cartName ?? "장바구니"}
 						</h1>
+						{cart.is_public && (
+							<LikeButton
+								liked={cart.is_liked}
+								count={cart.like_count}
+								onToggle={handleToggleLike}
+							/>
+						)}
 						{isSharedCart && (
 							<span className="rounded-full border border-[#D9CEBC] bg-[#F7F3E9] px-2 py-0.5 text-sm font-medium text-[#7A6E5A]">
 								공유

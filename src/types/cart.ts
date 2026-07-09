@@ -29,6 +29,8 @@ export interface CartResponse {
 	budget: number | null;
 	owner_id: number;
 	cart_type: CartType;
+	like_count: number;
+	is_liked: boolean;
 }
 
 /** GET /api/carts/{cartId} 상세 */

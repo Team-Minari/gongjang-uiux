@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { ShoppingCart, Users, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { usePublicCarts, useCartItems } from "../../hooks/cart/useCart";
+import {
+	usePublicCarts,
+	useBestCarts,
+	useCartItems,
+} from "../../hooks/cart/useCart";
+import { useLikeCart, useUnlikeCart } from "../../hooks/cart/useCartMutation";
+import { useRequireAuth } from "../../hooks/auth/useRequireAuth";
+import LikeButton from "../../components/common/LikeButton";
 import {
 	CART_CATEGORIES,
 	type CartCategory,
@@ -19,6 +26,9 @@ const FALLBACK_THUMBNAIL =
 function CartCard({ cart }: { cart: CartResponse }) {
 	const navigate = useNavigate();
 	const { data: items = [] } = useCartItems(cart.id);
+	const { requireAuth } = useRequireAuth();
+	const { mutate: like } = useLikeCart();
+	const { mutate: unlike } = useUnlikeCart();
 	const isShared = cart.cart_type === "SHARED";
 	const categoryLabel =
 		CART_CATEGORIES.find((c) => c.value === cart.category)?.label ??
@@ -29,6 +39,14 @@ function CartCard({ cart }: { cart: CartResponse }) {
 		navigate(`/cart/detail?id=${cart.id}&source=public`);
 	};
 
+	const handleToggleLike = requireAuth(() => {
+		if (cart.is_liked) {
+			unlike(cart.id);
+		} else {
+			like(cart.id);
+		}
+	});
+
 	return (
 		<div className="group flex cursor-pointer flex-col" onClick={handleClick}>
 			<div
@@ -38,6 +56,13 @@ function CartCard({ cart }: { cart: CartResponse }) {
 					src={thumbnail}
 					alt={cart.name}
 					className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+				/>
+				{/* 좋아요 버튼 */}
+				<LikeButton
+					liked={cart.is_liked}
+					count={cart.like_count}
+					onToggle={handleToggleLike}
+					className="absolute top-2.5 right-2.5 bg-white shadow-md"
 				/>
 			</div>
 			<div className="flex flex-col gap-1.5">
@@ -85,7 +110,16 @@ export default function CartListPage() {
 	const [activeCategory, setActiveCategory] = useState<CartCategory>(
 		CART_CATEGORIES[0].value
 	);
-	const { data: carts = [], isLoading } = usePublicCarts(activeCategory);
+	const isBest = activeCategory === "BEST";
+	const { data: normalCarts = [], isLoading: isNormalLoading } = usePublicCarts(
+		activeCategory,
+		{ enabled: !isBest }
+	);
+	const { data: bestCarts = [], isLoading: isBestLoading } = useBestCarts({
+		enabled: isBest,
+	});
+	const carts = isBest ? bestCarts : normalCarts;
+	const isLoading = isBest ? isBestLoading : isNormalLoading;
 
 	const filteredCarts = carts.slice(0, PAGE_SIZE);
 	const currentCategory = CART_CATEGORIES.find(

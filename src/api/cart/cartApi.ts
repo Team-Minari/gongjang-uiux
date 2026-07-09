@@ -24,6 +24,12 @@ export const getPublicCarts = (category?: CartCategory) =>
 		})
 		.then((res) => res.data.data);
 
+/** 좋아요 순 베스트 장바구니 목록 조회 */
+export const getBestCarts = () =>
+	apiClient
+		.get<ApiResponse<CartResponse[]>>(`${BASE}/best`)
+		.then((res) => res.data.data);
+
 /** 자연어 장바구니 검색 (비인증 가능) */
 export const searchCarts = (query: string) =>
 	apiClient
@@ -134,3 +140,13 @@ export const joinCart = (token: string) =>
 			params: { token },
 		})
 		.then((res) => res.data.data);
+
+// ── 좋아요 Mutation ──
+
+/** 장바구니 좋아요 (공개 장바구니만 가능) */
+export const likeCart = (cartId: number) =>
+	apiClient.post(`${BASE}/${cartId}/like`);
+
+/** 장바구니 좋아요 취소 */
+export const unlikeCart = (cartId: number) =>
+	apiClient.delete(`${BASE}/${cartId}/like`);

@@ -6,12 +6,18 @@ import {
 	type Product,
 } from "../../types/product";
 import type { CartCategory } from "../../types/cart";
-import { useProducts } from "../../hooks/product/useProduct";
+import { useProducts, useBestProducts } from "../../hooks/product/useProduct";
+import {
+	useLikeProduct,
+	useUnlikeProduct,
+} from "../../hooks/product/useProductMutation";
 import {
 	useOpenAddToCartModal,
 	useOpenSelectCartModal,
 } from "../../store/useCartModalStore";
 import { useAllCartsCount } from "../../store/useCartStore";
+import { useRequireAuth } from "../../hooks/auth/useRequireAuth";
+import LikeButton from "../../components/common/LikeButton";
 
 const PAGE_SIZE = 24; // 4열 × 6행
 
@@ -23,6 +29,9 @@ function ProductCard({ product }: { product: Product }) {
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
 	const cartCount = useAllCartsCount();
+	const { requireAuth } = useRequireAuth();
+	const { mutate: like } = useLikeProduct();
+	const { mutate: unlike } = useUnlikeProduct();
 
 	const handleAddToCart = (e: React.MouseEvent) => {
 		e.stopPropagation();
@@ -33,6 +42,14 @@ function ProductCard({ product }: { product: Product }) {
 			openAddToCartModal();
 		}
 	};
+
+	const handleToggleLike = requireAuth(() => {
+		if (product.is_liked) {
+			unlike(product.id);
+		} else {
+			like(product.id);
+		}
+	});
 
 	return (
 		<div
@@ -46,6 +63,13 @@ function ProductCard({ product }: { product: Product }) {
 					src={product.image_url}
 					alt={product.name}
 					className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+				/>
+				{/* 좋아요 버튼 */}
+				<LikeButton
+					liked={product.is_liked}
+					count={product.like_count}
+					onToggle={handleToggleLike}
+					className="absolute top-2.5 right-2.5 bg-white shadow-md"
 				/>
 				{/* 장바구니 담기 버튼 */}
 				<button
@@ -85,13 +109,19 @@ export default function CategoryProductListPage() {
 
 	// URL ?category= 파라미터로 카테고리 결정. 없으면 전체.
 	const categoryId = searchParams.get("category") ?? "all";
+	const isBest = categoryId === "best";
 
-	const { data: products = [] } = useProducts(
-		categoryId === "all" || categoryId === "best"
+	const { data: normalProducts = [] } = useProducts(
+		categoryId === "all" || isBest
 			? undefined
-			: { category: categoryId as CartCategory }
+			: { category: categoryId as CartCategory },
+		{ enabled: !isBest }
 	);
-	const filteredProducts = products.slice(0, PAGE_SIZE);
+	const { data: bestProducts = [] } = useBestProducts({ enabled: isBest });
+	const filteredProducts = (isBest ? bestProducts : normalProducts).slice(
+		0,
+		PAGE_SIZE
+	);
 	const categoryLabel =
 		categoryId === "all"
 			? "전체"

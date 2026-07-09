@@ -5,6 +5,7 @@ import {
 	getCartItems,
 	getCartParticipants,
 	getPublicCarts,
+	getBestCarts,
 	searchCarts,
 } from "../../api/cart/cartApi";
 import { useAuthStore } from "../../store/auth/useAuthStore";
@@ -18,14 +19,28 @@ export const CART_KEYS = {
 	participants: (cartId: number) => ["carts", "participants", cartId] as const,
 	publicList: (category?: CartCategory) =>
 		["carts", "public", category ?? "all"] as const,
+	best: () => ["carts", "best"] as const,
 	search: (query: string) => ["carts", "search", query] as const,
 };
 
 /** 공개 장바구니 목록 (비인증 가능, category 필터 옵션) */
-export const usePublicCarts = (category?: CartCategory) =>
+export const usePublicCarts = (
+	category?: CartCategory,
+	options?: { enabled?: boolean }
+) =>
 	useQuery({
 		queryKey: CART_KEYS.publicList(category),
 		queryFn: () => getPublicCarts(category),
+		enabled: options?.enabled ?? true,
+		staleTime: 60 * 1000,
+	});
+
+/** 좋아요 순 베스트 장바구니 목록 (공개 장바구니만 대상) */
+export const useBestCarts = (options?: { enabled?: boolean }) =>
+	useQuery({
+		queryKey: CART_KEYS.best(),
+		queryFn: getBestCarts,
+		enabled: options?.enabled ?? true,
 		staleTime: 60 * 1000,
 	});
 

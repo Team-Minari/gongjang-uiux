@@ -13,6 +13,8 @@ import {
 	kickParticipant,
 	transferOwnership,
 	joinCart,
+	likeCart,
+	unlikeCart,
 } from "../../api/cart/cartApi";
 import { CART_KEYS } from "./useCart";
 import type {
@@ -237,6 +239,34 @@ export const useJoinCart = () => {
 		mutationFn: (token: string) => joinCart(token),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: CART_KEYS.myList() });
+		},
+	});
+};
+
+// ── 좋아요 Mutation ──
+
+/** 장바구니 좋아요 */
+export const useLikeCart = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (cartId: number) => likeCart(cartId),
+		onSuccess: (_data, cartId) => {
+			queryClient.invalidateQueries({ queryKey: CART_KEYS.all });
+			queryClient.invalidateQueries({ queryKey: CART_KEYS.detail(cartId) });
+		},
+	});
+};
+
+/** 장바구니 좋아요 취소 */
+export const useUnlikeCart = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (cartId: number) => unlikeCart(cartId),
+		onSuccess: (_data, cartId) => {
+			queryClient.invalidateQueries({ queryKey: CART_KEYS.all });
+			queryClient.invalidateQueries({ queryKey: CART_KEYS.detail(cartId) });
 		},
 	});
 };
