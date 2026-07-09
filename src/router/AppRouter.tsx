@@ -7,6 +7,7 @@ import ProductDetailPage from "../pages/products/ProductDetailPage.tsx";
 import CategoryProductListPage from "../pages/products/CategoryProductListPage.tsx";
 import CartListPage from "../pages/cart/CartListPage.tsx";
 import CartDetailPage from "../pages/cart/CartDetailPage.tsx";
+import CartJoinPage from "../pages/cart/CartJoinPage.tsx";
 import ScrollToTop from "../components/layout/ScrollToTop.tsx";
 
 export default function AppRouter() {
@@ -16,6 +17,7 @@ export default function AppRouter() {
 			<Routes>
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/oauth/kakao/callback" element={<OAuthCallbackPage />} />
+				<Route path="/cart/join" element={<CartJoinPage />} />
 
 				<Route element={<GlobalLayout />}>
 					<Route path="/" element={<MainPage />} />

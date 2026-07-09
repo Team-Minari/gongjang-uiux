@@ -96,7 +96,7 @@ export default function CartSection() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6">
 				{/* 섹션 타이틀 */}
 				<h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 lg:mb-5">
-					가장 인기있는 장바구니
+					장바구니 둘러보기
 				</h2>
 
 				{/* 카테고리 탭 */}

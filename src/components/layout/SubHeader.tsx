@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useToggleSidebar } from "../../store/useCartModalStore.ts";
 import { useIsAuthenticated } from "../../store/auth/useAuthStore";
 import { useLogout } from "../../hooks/auth/useAuth";
+import InvitationBell from "./InvitationBell";
 
 export default function SubHeader() {
 	const toggleSidebar = useToggleSidebar();
@@ -36,6 +37,7 @@ export default function SubHeader() {
 				<section className="flex items-center gap-2" />
 
 				<section className="flex items-center gap-0.5 sm:gap-1">
+					<InvitationBell />
 					<button
 						onClick={handleNavigateHome}
 						className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors">

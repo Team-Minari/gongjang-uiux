@@ -102,7 +102,9 @@ export default function CategoryProductListPage() {
 			{/* 페이지 헤더 */}
 			<div className="bg-white">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-10">
-					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{categoryLabel}</h1>
+					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+						{categoryLabel}
+					</h1>
 					<p className="mt-2 text-sm text-gray-500">
 						{categoryId === "best"
 							? "가장 인기 있는 베스트 상품을 모아봤어요"

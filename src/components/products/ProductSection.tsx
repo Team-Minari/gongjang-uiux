@@ -41,7 +41,9 @@ export default function ProductSection({ title }: ProductSectionProps) {
 		<section className="w-full bg-white py-10 sm:py-12 lg:py-16">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6">
 				{/* 섹션 타이틀 - props로 주입 */}
-				<h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 lg:mb-5">{title}</h2>
+				<h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 lg:mb-5">
+					{title}
+				</h2>
 
 				{/* 카테고리 탭 */}
 				<div className="flex overflow-x-auto border-b border-gray-200 mb-6">

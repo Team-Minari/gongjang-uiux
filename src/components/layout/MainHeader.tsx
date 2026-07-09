@@ -8,10 +8,6 @@ export default function MainHeader() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 
-	const handleAllCategory = () => {
-		setIsMenuOpen(false);
-		alert("전체 카테고리 메뉴는 현재 구현 예정입니다.");
-	};
 	const go = (path: string) => {
 		setIsMenuOpen(false);
 		navigate(path);
@@ -63,14 +59,8 @@ export default function MainHeader() {
 						{isMenuOpen && (
 							<div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-[#E8E2D0] bg-white shadow-xl z-50 py-2">
 								<button
-									onClick={handleAllCategory}
-									className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-gray-800 hover:bg-[#F7F3E9]">
-									<span className="text-base">☰</span>
-									전체 카테고리
-								</button>
-								<button
 									onClick={() => go("/cart")}
-									className="block w-full px-4 py-2.5 text-left text-sm font-medium text-gray-800 hover:bg-[#F7F3E9]">
+									className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-gray-800 hover:bg-[#F7F3E9]">
 									장바구니
 								</button>
 								<button
@@ -95,15 +85,9 @@ export default function MainHeader() {
 				{/* 데스크탑 네비 */}
 				<nav className="hidden lg:flex items-center gap-9 text-base">
 					<button
-						onClick={handleAllCategory}
-						className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors">
-						<span className="text-sm">☰</span>
-						<span>전체 카테고리</span>
-					</button>
-					<button
 						onClick={() => navigate("/cart")}
-						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						장바구니
+						className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors">
+						<span>장바구니</span>
 					</button>
 					<button
 						onClick={() => navigate("/products")}

@@ -56,7 +56,9 @@ export default function MainSection({ product }: MainSectionProps) {
 				</div>
 
 				<div className="mb-8 lg:mb-12 border-t border-[#ECE4D7] pt-6 lg:pt-8">
-					<p className="mb-2 text-xs sm:text-sm font-medium text-gray-500">판매가</p>
+					<p className="mb-2 text-xs sm:text-sm font-medium text-gray-500">
+						판매가
+					</p>
 					<span className="text-2xl sm:text-3xl lg:text-[36px] font-bold tracking-tight text-[#1F2937]">
 						{product.price.toLocaleString()}원
 					</span>

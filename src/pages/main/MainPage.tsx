@@ -7,7 +7,7 @@ export default function MainPage() {
 		<main className="flex-1 bg-white">
 			<MainCarousel />
 			<CartSection />
-			<ProductSection title="가장 인기있는 상품" />
+			<ProductSection title="상품 둘러보기" />
 		</main>
 	);
 }

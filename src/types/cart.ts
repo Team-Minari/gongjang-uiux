@@ -2,9 +2,15 @@
 export type CartType = "PERSONAL" | "SHARED";
 
 // 백엔드 global.enums.Category와 동일
-export type CartCategory = "LIVING" | "INGREDIENTS" | "OFFICE" | "CAMPING";
+export type CartCategory =
+	| "BEST"
+	| "LIVING"
+	| "INGREDIENTS"
+	| "OFFICE"
+	| "CAMPING";
 
 export const CART_CATEGORIES: { value: CartCategory; label: string }[] = [
+	{ value: "BEST", label: "베스트" },
 	{ value: "LIVING", label: "생활용품" },
 	{ value: "INGREDIENTS", label: "식재료" },
 	{ value: "OFFICE", label: "사무용품" },
